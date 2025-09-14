@@ -59,3 +59,5 @@ fn parse_arguments(settings: &config::Settings) -> bool {
         return false;
     }
 }
+
+mod tests;
