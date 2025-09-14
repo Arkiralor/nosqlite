@@ -24,14 +24,13 @@ fn main() {
             Ok(_) => {
                 let trimmed = user_command.trim();
                 if !trimmed.is_empty() {
-                    println!("PID {} received: {}", pid, trimmed);
-                    // You can parse and handle the command here
+                    // println!("PID {} received: {}", pid, trimmed);
+                    execute_command(&user_command, &settings, &config);
                 } else {
                     println!("No input received for PID {}.", pid);
                 }
             }
             Err(e) => {}
         }
-        execute_command(&user_command, &settings, &config);
     }
 }
