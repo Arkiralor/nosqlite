@@ -16,5 +16,5 @@ pub fn verify_password(password: &str, hashed: &str, secret_key: &str) -> bool {
     let hashed_input = hash_password(password, secret_key);
     println!("Comparing {} against {}", hashed_input, hashed);
     println!("Verification result: {}", hashed_input == hashed);
-    return (hashed_input == hashed);
+    return hashed_input == hashed;
 }

@@ -2,6 +2,6 @@
     "pid": 12345,
     "data_dir": "repository",
     "master_user_name": "admin",
-    "master_user_password": "9e05d4d52a3dad66e188f5ef43d52b77dab8920d61d9d850b799ba6434ce3548",
+    "master_user_password": "admin_password",
     "secret_key": "your_secret_key_here"
 }

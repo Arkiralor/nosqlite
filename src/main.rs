@@ -3,29 +3,16 @@ mod models;
 mod schema;
 mod utils;
 use std;
-use std::fs::File;
 use std::io::{self, BufRead};
-use utils::auth_utils::{hash_password, verify_password};
 use utils::database_commands::execute_command;
 
 fn main() {
     let pid: u32 = std::process::id();
-    let mut iteration: u64 = 0;
-
-    let mut settings: config::Settings = config::Settings::new();
-    let config: models::config_models::ConfigJson =
-        models::config_models::ConfigJson::read_from_file(&settings.config_file_path);
-
-    settings.pid = config.pid;
-    settings.data_dir = config.data_dir.clone();
-    settings.master_user_name = config.master_user_name.clone();
-    settings.master_user_password = config.master_user_password.clone();
-    settings.secret_key = config.secret_key.clone();
-
+    let settings: config::Settings = config::Settings::new();
     let stdin = io::stdin();
     let mut handle = stdin.lock();
 
-    if !parse_arguments(&config) {
+    if !parse_arguments(&settings) {
         eprintln!(
             "Exiting process with PID {} due to authentication failure.",
             pid
@@ -40,17 +27,17 @@ fn main() {
                 let trimmed = user_command.trim();
                 if !trimmed.is_empty() {
                     // println!("PID {} received: {}", pid, trimmed);
-                    execute_command(&user_command, &settings, &config);
+                    execute_command(&user_command, &settings);
                 } else {
                     println!("No input received for PID {}.", pid);
                 }
             }
-            Err(e) => {}
+            Err(_e) => {}
         }
     }
 }
 
-fn parse_arguments(config: &models::config_models::ConfigJson) -> bool {
+fn parse_arguments(settings: &config::Settings) -> bool {
     let args: Vec<String> = std::env::args().collect();
     if args.len() != 3 {
         eprintln!("Usage: <program> <username> <password>");
@@ -59,9 +46,7 @@ fn parse_arguments(config: &models::config_models::ConfigJson) -> bool {
     let username = &args[1];
     let password = &args[2];
 
-    if username == &config.master_user_name
-        && verify_password(password, &config.master_user_password, &config.secret_key)
-    {
+    if username == &settings.master_user_name && settings.verify_password(password) {
         println!("Authentication successful for user: {}", username);
         return true;
     } else {

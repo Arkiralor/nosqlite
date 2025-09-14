@@ -1,3 +1,5 @@
+use crate::models::config_models::ConfigJson;
+use crate::utils::auth_utils::{hash_password, verify_password};
 use std::env;
 use std::path::{Path, PathBuf};
 
@@ -18,11 +20,13 @@ impl Settings {
         let config_file_name = "config.json".to_string();
         let config_file_path = base_dir.join(&config_file_name);
 
-        let pid = u32::default();
-        let data_dir = "data".to_string();
-        let master_user_name = "admin".to_string();
-        let master_user_password = "password".to_string();
-        let secret_key = "my-s3cre4t-k3y".to_string();
+        let config: ConfigJson = ConfigJson::read_from_file(&config_file_path);
+
+        let pid = config.pid;
+        let data_dir = config.data_dir.clone();
+        let master_user_name = config.master_user_name.clone();
+        let master_user_password = hash_password(&config.master_user_password, &config.secret_key);
+        let secret_key = config.secret_key.clone();
         Settings {
             base_dir,
             config_file_name,
@@ -44,5 +48,9 @@ impl Settings {
             .to_path_buf();
         let cwd = env::current_dir().unwrap();
         cwd.join(base_dir).to_path_buf()
+    }
+
+    pub fn verify_password(&self, password: &str) -> bool {
+        verify_password(password, &self.master_user_password, &self.secret_key)
     }
 }
