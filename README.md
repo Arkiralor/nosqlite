@@ -116,13 +116,34 @@ Collection directory 'users' created at '/path/to/repository/users'.
 - `src/utils/database_commands.rs` — Command execution logic
 - `src/config.json` — Configuration file
 
+### Config.JSON Structure
+
+Please ensure you create a `config.json` file in the `src` directory with the following structure:
+
+```json
+{
+    "pid": <the process ID of the running application>,
+    "data_dir": "<the directory where database files are stored>",
+    "master_user_name": "<the admin username>",
+    "master_user_password": "<the admin password>",
+    "secret_key": "<the secret key for encryption or hashing>"
+}
+```
+
+Please use the following Python code to generate a SECRET_KEY.
+
+```py
+from secrets import token_hex
+print(token_hex(128))
+```
+
 ## Contributing
 
 Pull requests and issues are welcome!
 
 ## License
 
-[MIT](LICENSE.md)
+[MIT License](LICENSE.md) under the principles of free & open source software and copyleft. 
 
 
 ## Authors
