@@ -18,6 +18,14 @@ fn main() {
     let stdin = io::stdin();
     let mut handle = stdin.lock();
 
+    if !parse_arguments(&config) {
+        eprintln!(
+            "Exiting process with PID {} due to authentication failure.",
+            pid
+        );
+        std::process::exit(1);
+    }
+
     loop {
         let mut user_command = String::new();
         match handle.read_line(&mut user_command) {
@@ -32,5 +40,23 @@ fn main() {
             }
             Err(e) => {}
         }
+    }
+}
+
+fn parse_arguments(config: &models::config_models::ConfigJson) -> bool {
+    let args: Vec<String> = std::env::args().collect();
+    if args.len() != 3 {
+        eprintln!("Usage: <program> <username> <password>");
+        return false;
+    }
+    let username = &args[1];
+    let password = &args[2];
+
+    if username == &config.master_user_name && password == &config.master_user_password {
+        println!("Authentication successful for user: {}", username);
+        return true;
+    } else {
+        eprintln!("Authentication failed for user: {}", username);
+        return false;
     }
 }
