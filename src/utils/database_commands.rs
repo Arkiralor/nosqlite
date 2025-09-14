@@ -36,7 +36,7 @@ fn execute_parsed_query(query: &MongoQuery, settings: &Settings, config: &Config
             let collection_path = format!(
                 "{}/{}/{}",
                 &settings.base_dir.display(),
-                config.data_dir,
+                settings.data_dir,
                 name
             );
             let collection_dir = Path::new(&collection_path);
@@ -62,7 +62,7 @@ fn execute_parsed_query(query: &MongoQuery, settings: &Settings, config: &Config
             let collection_path = format!(
                 "{}/{}/{}",
                 &settings.base_dir.display(),
-                config.data_dir,
+                settings.data_dir,
                 name
             );
             let collection_dir = Path::new(&collection_path);

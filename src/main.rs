@@ -12,9 +12,15 @@ fn main() {
     let pid: u32 = std::process::id();
     let mut iteration: u64 = 0;
 
-    let settings: config::Settings = config::Settings::new();
+    let mut settings: config::Settings = config::Settings::new();
     let config: models::config_models::ConfigJson =
         models::config_models::ConfigJson::read_from_file(&settings.config_file_path);
+
+    settings.pid = config.pid;
+    settings.data_dir = config.data_dir.clone();
+    settings.master_user_name = config.master_user_name.clone();
+    settings.master_user_password = config.master_user_password.clone();
+    settings.secret_key = config.secret_key.clone();
 
     let stdin = io::stdin();
     let mut handle = stdin.lock();
@@ -26,11 +32,6 @@ fn main() {
         );
         std::process::exit(1);
     }
-    // let mut password: &str = "admin_password";
-    // println!(
-    //     "Hashed master password: {}",
-    //     hash_password(&password, &config.secret_key)
-    // );
 
     loop {
         let mut user_command = String::new();

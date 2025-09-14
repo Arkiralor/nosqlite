@@ -122,7 +122,7 @@ Pull requests and issues are welcome!
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE.md)
 
 
 ## Authors
