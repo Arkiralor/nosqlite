@@ -4,22 +4,34 @@ mod schema;
 mod utils;
 use std;
 use std::fs::File;
+use std::io::{self, BufRead};
+use utils::database_commands::execute_command;
 
 fn main() {
     let pid: u32 = std::process::id();
     let mut iteration: u64 = 0;
 
-    let settings = config::Settings::new();
+    let settings: config::Settings = config::Settings::new();
+    let config: models::config_models::ConfigJson =
+        models::config_models::ConfigJson::read_from_file(&settings.config_file_path);
 
-    let panic_msg: String = format!("File '{}' not found.", settings.config_file_path.display());
-    let config_json_file_obj: File = File::open(settings.config_file_path).expect(&panic_msg);
-    let imported_config: models::config_models::ConfigJson =
-        serde_json::from_reader(config_json_file_obj).expect("Error while reading file");
+    let stdin = io::stdin();
+    let mut handle = stdin.lock();
 
     loop {
-        iteration = iteration + 1;
-        // print!("{}. Process running on Port: {}.\n", iteration, pid);
-        // print!("Config Json File: {:?}\n", settings.config_file_path);
-        print!("Config Data: {:?}\n", imported_config);
+        let mut user_command = String::new();
+        match handle.read_line(&mut user_command) {
+            Ok(_) => {
+                let trimmed = user_command.trim();
+                if !trimmed.is_empty() {
+                    println!("PID {} received: {}", pid, trimmed);
+                    // You can parse and handle the command here
+                } else {
+                    println!("No input received for PID {}.", pid);
+                }
+            }
+            Err(e) => {}
+        }
+        execute_command(&user_command, &settings, &config);
     }
 }

@@ -1,8 +1,10 @@
 use serde::{Deserialize, Serialize};
 use std::fmt::{Debug, Display};
+use std::fs::File;
+use std::path::PathBuf;
 
 #[derive(Deserialize, Serialize)]
-//Struct to represent the configuration settings loaded from a JSON file.
+///Struct to represent the configuration settings loaded from a JSON file.
 pub struct ConfigJson {
     pub pid: u32,
     pub data_dir: String,
@@ -35,7 +37,7 @@ impl ConfigJson {
         master_user_password: Option<String>,
         secret_key: Option<String>,
     ) -> Self {
-        //! Create a new galaxy object from the given data.
+        //! Create a new config object from the given data.
         let pid: u32 = match pid {
             Some(val) => val,
             None => u32::default(),
@@ -70,13 +72,13 @@ impl ConfigJson {
         }
     }
 
-    // pub fn display(&self) {
-    //     println!("PID: {}", self.pid);
-    //     println!("Data Directory: {}", self.data_dir);
-    //     println!("Master User Name: {}", self.master_user_name);
-    //     println!("Master User Password: {}", self.master_user_password);
-    //     println!("Secret Key: {}", self.secret_key);
-    // }
+    pub fn read_from_file(file_path: &PathBuf) -> Self {
+        let panic_msg: String = format!("File '{}' not found.", file_path.display());
+        let config_json_file_obj: File = File::open(file_path).expect(&panic_msg);
+        let imported_config: ConfigJson =
+            serde_json::from_reader(config_json_file_obj).expect("Error while reading file");
+        imported_config
+    }
 }
 impl Display for ConfigJson {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

@@ -1,6 +1,6 @@
 {
     "pid": 12345,
-    "data_dir": "respository",
+    "data_dir": "repository",
     "master_user_name": "admin",
     "master_user_password": "admin_password",
     "secret_key": "your_secret_key_here"
