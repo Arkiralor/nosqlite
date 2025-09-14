@@ -59,7 +59,29 @@ fn execute_parsed_query(query: &MongoQuery, settings: &Settings, config: &Config
         }
         MongoQuery::DropCollection { name } => {
             println!("Drop collection: {}", name);
-            // Add drop collection logic here
+            let collection_path = format!(
+                "{}/{}/{}",
+                &settings.base_dir.display(),
+                config.data_dir,
+                name
+            );
+            let collection_dir = Path::new(&collection_path);
+            if collection_dir.exists() {
+                match std::fs::remove_dir_all(collection_dir) {
+                    Ok(_) => println!(
+                        "Collection directory '{}' removed from '{}'.",
+                        name,
+                        collection_dir.display()
+                    ),
+                    Err(e) => eprintln!("Failed to remove collection directory '{}': {}", name, e),
+                }
+            } else {
+                println!(
+                    "Collection directory '{}' does not exist at '{}'.",
+                    name,
+                    collection_dir.display()
+                );
+            }
         }
         MongoQuery::CreateUser {
             username,
